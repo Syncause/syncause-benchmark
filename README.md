@@ -6,16 +6,19 @@
 
 This project aims to record and evaluate benchmark testing of SynCause platform's AI agent - AgentSRE in the field of system root cause analysis. Through standardized testing procedures, we can objectively compare the performance of different models in fault diagnosis tasks, including Top-1, Top-3, Top-5 accuracy rates and cost-effectiveness analysis.
 
-## Test Dataset Source
+## Test Dataset Source and Testing Methodology
 
 ### Dataset Description
-The test dataset is sourced from the [RCAEval](https://github.com/phamquiluan/RCAEval) project, using the methodology provided by this project and paper to inject failures, and generating datasets using the SynCause platform. The dataset includes:
+The test dataset is sourced from the [RCAEval](https://github.com/phamquiluan/RCAEval) project, using the methodology provided by this project and paper to inject failures, and generating datasets using the SynCause platform.
+The dataset is located in the `backupdata` directory and includes:
 
 - **Failure Scenarios**: Covering various failure types including Kubernetes, microservices, networking, storage, etc.
 - **Log Data**: Including system logs, application logs, error logs, etc.
 - **Metrics Data**: Performance metrics, resource utilization, etc.
 - **Annotation Information**: Expert-annotated ground truth root causes and solutions
 
+## Testing Methodology
+We completely used the [RCAEval](https://github.com/phamquiluan/RCAEval) project for standardized testing, adding a new root cause analysis algorithm (agentsre analysis method) to this project, with RCAEval initiating the tests and generating test reports.
 
 ## Test Results
 
