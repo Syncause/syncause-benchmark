@@ -1,0 +1,28 @@
+general:
+  remote_storage: local
+  max_file_size: 1073741824
+  disable_progress_bar: false
+  backups_to_keep_local: 5
+  backups_to_keep_remote: 0
+  log_level: info
+  allow_empty_backups: false
+
+clickhouse:
+  username: default
+  password: ''
+  host: localhost
+  port: 9000
+  secure: false
+  skip_verify: false
+  sync_replicated_tables: true
+  log_sql_queries: false
+  config_dir: /etc/clickhouse-server/
+  restart_command: 'systemctl restart clickhouse-server'
+  ignore_databases: []
+  ignore_tables: []
+  skip_check_parts_columns: false
+  timeout: 5m
+  freeze_by_part: false
+
+local:
+  path: ./clickhouse_backups/

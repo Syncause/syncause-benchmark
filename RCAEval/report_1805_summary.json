@@ -1,0 +1,12 @@
+{
+  "detect_time": "2025-10-14T18:05:00+08:00",
+  "report_length": 71136,
+  "json_objects_count": 124,
+  "key_objects": {
+    "intention": null,
+    "all_services": null,
+    "abnormal_services": null,
+    "causal_graph": null,
+    "cpu_info": null
+  }
+}

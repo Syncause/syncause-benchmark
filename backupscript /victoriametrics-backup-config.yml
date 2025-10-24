@@ -1,0 +1,61 @@
+# VictoriaMetrics 备份配置文件
+
+# VictoriaMetrics 连接配置
+victoriametrics:
+  addr: "http://localhost:8428"        # VictoriaMetrics 地址
+  username: ""                          # 用户名（可选）
+  password: ""                          # 密码（可选）
+  timeout: "30s"                        # 连接超时时间
+
+# 备份配置
+backup:
+  format: "prometheus"                  # 备份格式: prometheus, influxdb, csv
+  default_range: "-1d"                  # 默认时间范围
+  compression: true                      # 是否压缩备份文件
+  metadata: true                        # 是否保存元数据
+
+# 存储配置
+storage:
+  local_path: "./victoriametrics_backups"  # 本地备份路径
+  keep_backups: 7                       # 保留备份天数
+  max_size: "10GB"                      # 最大备份大小
+
+# 远程存储配置（可选）
+remote:
+  enabled: false                        # 是否启用远程存储
+  type: "s3"                           # 存储类型: s3, gcs, azure
+  s3:
+    endpoint: ""
+    bucket: ""
+    region: "us-east-1"
+    access_key: ""
+    secret_key: ""
+  gcs:
+    bucket: ""
+    credentials_file: ""
+  azure:
+    account_name: ""
+    account_key: ""
+    container: ""
+
+# 通知配置（可选）
+notifications:
+  enabled: false                        # 是否启用通知
+  email:
+    smtp_server: ""
+    smtp_port: 587
+    username: ""
+    password: ""
+    from: ""
+    to: []
+  webhook:
+    url: ""
+    headers: {}
+
+# 日志配置
+logging:
+  level: "info"                         # 日志级别: debug, info, warn, error
+  file: ""                             # 日志文件路径（空表示输出到控制台）
+  max_size: "100MB"                    # 日志文件最大大小
+  max_backups: 3                       # 保留的日志文件数量
+  max_age: 28                          # 日志文件保留天数
