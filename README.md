@@ -5,11 +5,12 @@
 ## Project Introduction
 
 This project aims to record and evaluate benchmark testing of SynCause platform's AI agent - AgentSRE in the field of system root cause analysis. Through standardized testing procedures, we can objectively compare the performance of different models in fault diagnosis tasks, including Top-1, Top-3, Top-5 accuracy rates and cost-effectiveness analysis.
+We believe that using AI agents combined with eBPF data (todo: link to be improved, pointing to the role of eBPF data) for root cause analysis will greatly improve RCA accuracy - achieving over 95% Top-1 accuracy and 100% Top-3 accuracy. For this purpose, we have established this test set to verify our goals and will continue to expand the test set.
 
 ## Test Dataset Source and Testing Methodology
 
 ### Dataset Description
-The test dataset is sourced from the [RCAEval](https://github.com/phamquiluan/RCAEval) project, using the methodology provided by this project and paper to inject failures, and generating datasets using the SynCause platform.
+The test dataset is sourced from the [RCAEval](https://github.com/phamquiluan/RCAEval) project, and the dataset has been extended to include eBPF metrics data.
 The dataset is located in the `backupdata` directory and includes:
 
 - **Failure Scenarios**: Covering various failure types including Kubernetes, microservices, networking, storage, etc.

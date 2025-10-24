@@ -5,11 +5,12 @@
 ## 项目简介
 
 本项目旨在记录和评估SynCause平台的AI智能体-AgentSRE在系统根因分析领域的基准测试。通过标准化的测试流程，我们能够客观地比较不同模型在故障诊断任务中的性能，包括Top-1、Top-3、Top-5准确率以及成本效益分析。
+我们认为使用AI智能体配合ebpf数据（todo:链接待完善，指向ebpf数据的作用）进行根因分析将极大提升rca的准确率-在top1准确率做到95%以上、top3准确率做到100…%。为此我们设立了这个测试集来验证目标，并且还将不断扩展测试集。
 
 ## 测试数据集来源和测试方法
 
 ### 数据集描述
-测试数据集来源于 [RCAEval](https://github.com/phamquiluan/RCAEval) 项目，使用该项目和论文提供的方法论注入故障，并使用syncause平台生成数据集。
+测试数据集来源于 [RCAEval](https://github.com/phamquiluan/RCAEval) 项目，并对数据集进行了拓展，增加了ebpf指标数据。
 数据集在backupdata目录,数据集包含：
 
 - **故障场景**: 涵盖Kubernetes、微服务、网络、存储等多种故障类型
