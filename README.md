@@ -66,12 +66,14 @@ Each service contained 11–12 independent failure types. The results are summar
 > **Note:** Benchmark results will be continuously updated as models and analysis methods evolve. Future versions will include additional scenarios and model comparisons.
 
 
-### Cost Efficiency (Coming Soon)
+### Cost Efficiency
 
-Upcoming versions will include detailed cost-effectiveness analyses, including:
+Average **token consumption** and **execution latency** per case: 
 
-* Average **token consumption** per analysis
-* Average **execution latency** per test
+| Model | LLM Calls | Input Tokens | Output Tokens | Total Cost (USD) | Latency (s) |
+| --- | --- | --- | --- | --- | --- |
+| grok-4-fast-non-reasoning | 80 | 249,351 | 51,234 | $0.071 | 381.27 |
+| qwen-plus | 45 | 201,728 | 12,324 | $0.058 | 398.15 |
 
 
 ## Reproduction Guide
