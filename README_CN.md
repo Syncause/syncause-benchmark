@@ -28,17 +28,17 @@
 - **标注信息**: 专家标注的真实根因和解决方案
 
 ## 测试方法
-基于 [RCAEval](https://github.com/phamquiluan/RCAEval) 项目进行测试，该项目提供了标准化地测试与评估框架，我们在该框架中增加了一种新的根因分析算法--Syncause RCA，由RCAEval统一发起测试并生成结果报告。
+基于 [RCAEval](https://github.com/phamquiluan/RCAEval) 项目进行测试，该项目提供了标准化地测试与评估框架，我们在该框架中增加了一种新的根因分析算法——Syncause RCA，由RCAEval统一发起测试并生成结果报告。
 
 ### 衡量准确度指标：AC@k (Accuracy@k)
 `AC@k` 表示该RCA方法所给出的排名前 `k` 个结果中，包含真实根因的概率。
-简单来说，就是问：如果我只检查该方法推荐的前 `k` 个怀疑对象，我有多大几率能找到真正的故障根源？
+简单来说，该值回答了：如果我只检查该方法推荐的前 `k` 个怀疑对象，我有多大几率能找到真正的故障根源？
 
 `AC@k` 的得分范围为 0 到 1 之间。得分越高（越接近 1），代表该RCA方法的性能越好，这意味着它能更有效地将真实根因排在靠前的位置。
 
 ## 测试结果
 ### 根因服务识别准确度
-在测试场景`Online Boutique`中，针对服务`emailservice`, `productcatalogservice`, `recommendationservice`的11-12🀄种独立故障类型，基于`grok-4-fast-non-reasoning`模型，使用 Syncause RCA 进行根因分析，得到准确度如下表所示：
+在测试场景`Online Boutique`中，针对服务`emailservice`, `productcatalogservice`, `recommendationservice`的 11-12 种独立故障类型，基于`grok-4-fast-non-reasoning`模型，使用 Syncause RCA 进行根因分析，得到准确度如下表所示：
 
 | 服务 | 案例数 | AC@1 准确度 | AC@3 准确度 | AC@5 准确度 |
 | --- | --- | --- | --- | --- |
