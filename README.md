@@ -1,153 +1,167 @@
-# AgentSRE Benchmark
+
+# Syncause Benchmark
 
 [中文版 / Chinese Version](README_CN.md)
 
-## Project Introduction
+**Syncause Benchmark** provides a standardized evaluation framework to measure the performance of the **Syncause RCA** (Root Cause Analysis) method in system fault diagnosis tasks.
+This project aims to openly demonstrate the problem-solving capability of Syncause in the AI SRE Agent domain and to promote reproducible, comparable, and transparent research for AI-driven incident analysis.
 
-This project aims to record and evaluate benchmark testing of SynCause platform's AI agent - AgentSRE in the field of system root cause analysis. Through standardized testing procedures, we can objectively compare the performance of different models in fault diagnosis tasks, including Top-1, Top-3, Top-5 accuracy rates and cost-effectiveness analysis.
-We believe that using AI agents combined with eBPF data (todo: link to be improved, pointing to the role of eBPF data) for root cause analysis will greatly improve RCA accuracy - achieving over 95% Top-1 accuracy and 100% Top-3 accuracy. For this purpose, we have established this test set to verify our goals and will continue to expand the test set.
+## Syncause RCA Method Overview
 
-## Test Dataset Source and Testing Methodology
+In the fields of RCA and AIOps, numerous approaches have achieved partial success on specific datasets, **yet challenges remain in terms of accuracy and real-world applicability**.
+Traditional machine learning–based RCA solutions often face the following challenges:
+
+- **Long training cycles**: Model training and fine-tuning in production environments typically take several weeks.
+
+- **Lack of interpretability**: The generated results often lack transparent reasoning paths and interpretability, making it difficult for users to trust the outputs.
+
+With the rapid advancement of Large Language Models (LLMs), new opportunities have emerged to address these challenges.
+Syncause leverages LLMs to build an intelligent RCA Agent capable of delivering higher accuracy and faster response in root cause analysis tasks. Empirical results show that combining conventional observability signals (metrics, logs, and traces) with [**eBPF data**](https://syn-cause.com/blog/35e631d5-28fa-4c46-9f44-54f84707a2a4/) significantly improves diagnostic reliability and precision.
+
+By utilizing the reasoning capabilities of LLMs, Syncause makes RCA a **white-box process**—its inference logic and decision paths are fully visible to users.
+Recognizing that no RCA model is 100% accurate, Syncause introduces a trust-oriented approach: every output is grounded in real system observations. Even when the exact root cause is not immediately identified, the system visualizes intermediate hypotheses, validation paths, and **findings**. These findings provide valuable investigative clues, reduce repetitive work, and significantly shorten incident resolution time.
+
+This benchmark will continue to track and update the accuracy and behavior of different LLMs under diverse test scenarios, gradually expanding the evaluation dimensions to reflect Syncause’s performance across varied environments.
+The current results are based on the **Syncause Beta** version, and subsequent releases will be published and versioned in this repository.
+
+## Dataset and Evaluation Methodology
 
 ### Dataset Description
-The test dataset is sourced from the [RCAEval](https://github.com/phamquiluan/RCAEval) project, and the dataset has been extended to include eBPF metrics data.
-The dataset is located in the `backupdata` directory and includes:
 
-- **Failure Scenarios**: Covering various failure types including Kubernetes, microservices, networking, storage, etc.
-- **Log Data**: Including system logs, application logs, error logs, etc.
-- **Metrics Data**: Performance metrics, resource utilization, etc.
-- **Annotation Information**: Expert-annotated ground truth root causes and solutions
+The test dataset is based on the [**RCAEval**](https://github.com/phamquiluan/RCAEval) project and has been extended with **Syncause-specific eBPF metrics**.
 
-## Testing Methodology
-We completely used the [RCAEval](https://github.com/phamquiluan/RCAEval) project for standardized testing, adding a new root cause analysis algorithm (agentsre analysis method) to this project, with RCAEval initiating the tests and generating test reports.
+The dataset includes:
 
-## Test Results
+* **Failure Scenarios**: Covers Kubernetes, microservices, networking, and storage fault types
+* **Log Data**: System, application, and error logs
+* **Metric Data**: Performance metrics and resource utilization
+* **Annotations**: Expert-labeled ground-truth root causes and resolutions
 
-### Model Accuracy Comparison
 
-| Model | Top-1 Accuracy | Top-3 Accuracy | Top-5 Accuracy | Total Tests | Success Rate |
-|-------|----------------|----------------|----------------|-------------|--------------|
-| gpt-4o | 52% | 78% | 89% | 105 | 🟡 52% |
-| claude-3.5-sonnet | 82% | 94% | 98% | 105 | 🟢 82% |
-| gpt-4.1 | 67% | 85% | 93% | 105 | 🟡 67% |
-| gpt-5 | 74% | 88% | 95% | 105 | 🟡 74% |
-| deepseek-v3.1 | 75% | 89% | 96% | 105 | 🟡 75% |
-| qwen3-next-80b | 55% | 79% | 90% | 105 | 🟡 55% |
+## Evaluation Method
 
-### Model Cost Comparison
+All experiments are conducted using the standardized framework provided by [**RCAEval**](https://github.com/phamquiluan/RCAEval).
+A new algorithm named **Syncause RCA** was added to the RCAEval framework, and all benchmark runs and reports are generated through it.
 
-| Model | Tests | Avg Cost | Min Cost | Max Cost | Total Cost |
-|-------|-------|----------|----------|----------|------------|
-| gpt-4o | 93 | $0.18 | $0.03 | $1.00 | $16.67 |
-| claude-3.5-sonnet | 95 | $0.25 | $0.06 | $1.01 | $22.85 |
-| gpt-4.1 | 94 | $0.11 | $0.02 | $0.66 | $10.68 |
-| gpt-5 | 94 | $0.19 | $0.02 | $0.59 | $17.43 |
-| deepseek-v3.1 | 95 | $0.08 | $0.01 | $0.35 | $7.60 |
-| qwen3-next-80b | 95 | $0.06 | $0.01 | $0.28 | $5.70 |
+### Accuracy Metric: AC@k (Accuracy@k)
 
-### Model Latency Comparison
+`AC@k` represents the probability that the true root cause appears within the top `k` ranked predictions produced by an RCA method.
+In simple terms, it answers: *“If I only check the top `k` suspects recommended by the model, what is the chance that I’ll find the actual cause?”*
 
-| Model | Avg (s) | Min (s) | Max (s) | P50 (s) | P95 (s) |
-|-------|---------|---------|---------|---------|---------|
-| gpt-4o | 26.6 | 8.0 | 67.1 | 25.9 | 55.3 |
-| claude-3.5-sonnet | 48.9 | 9.8 | 263.9 | 43.4 | 100.8 |
-| gpt-4.1 | 40.7 | 5.5 | 645.1 | 25.4 | 51.7 |
-| gpt-5 | 138.5 | 17.4 | 859.1 | 81.6 | 752.3 |
-| deepseek-v3.1 | 75.5 | 21.1 | 221.1 | 68.2 | 145.3 |
-| qwen3-next-80b | 45.2 | 12.3 | 156.7 | 38.9 | 89.4 |
+The score ranges from 0 to 1. A higher value (closer to 1) indicates that the RCA approach can rank the correct root cause closer to the top, reflecting stronger diagnostic precision.
 
-### Accuracy by Failure Type
+## Evaluation Results
 
-## Reproduction Steps
+### Root Cause Service Identification Accuracy
+
+In the `Online Boutique` test scenario, for services `emailservice`, `productcatalogservice`, and `recommendationservice`, Syncause RCA was evaluated using the `grok-4-fast-non-reasoning` model.
+Each service contained 11–12 independent failure types. The results are summarized below:
+
+| Service               | Cases | AC@1  | AC@3  | AC@5  |
+| --------------------- | ----- | ----- | ----- | ----- |
+| emailservice          | 12    | 66.7% | 91.7% | 91.7% |
+| productcatalogservice | 11    | 63.6% | 90.9% | 90.9% |
+| recommendationservice | 12    | 58.3% | 91.7% | 100%  |
+
+> **Note:** Benchmark results will be continuously updated as models and analysis methods evolve. Future versions will include additional scenarios and model comparisons.
+
+
+### Cost Efficiency (Coming Soon)
+
+Upcoming versions will include detailed cost-effectiveness analyses, including:
+
+* Average **token consumption** per analysis
+* Average **execution latency** per test
+
+
+## Reproduction Guide
 
 ### 1. Environment Setup
 
 ```bash
-# 1. Enter test directory
+# Enter the RCAEval directory
 cd RCAEval
 
-# 2. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
 ```
 
 ### 2. Data Preparation
 
 ```bash
-# Access SynCause platform
-# 1. Open https://syn-cause.com/
-# 2. Follow the web instructions to install SynCause platform
+# Access the Syncause platform
+# 1. Visit https://syn-cause.com/
+# 2. Follow the on-screen instructions to install the Syncause platform
 
-# Import test data
+# Import benchmark datasets
 cd backupscript
 ./backup_scripts/victoriametrics_import.sh vm_backup_20241024_110000.tar.gz
 ./backup_scripts/clickhouse_import.sh clickhouse_backup_20241024_110000.tar.gz apo_restore
 ```
 
-### 3. Run Benchmark
+### 3. Run the Benchmark
 
 ```bash
-# Run RCAEval benchmark
+# Execute RCAEval benchmark
 python test_srechat_with_error_inject.py
 ```
 
-### 4. Get Results
+### 4. Retrieve Results
 
-#### Get Accuracy from Logs
+#### From Log Files
+
 ```bash
-# View test logs
+# View benchmark logs
 tail -f logs/benchmark.log
 
-# Extract accuracy information
+# Extract accuracy metrics
 grep "Accuracy" logs/benchmark.log
 grep "Top-1" logs/benchmark.log
 grep "Top-3" logs/benchmark.log
 grep "Top-5" logs/benchmark.log
 ```
 
-#### Get Cost Information from Braintrust
+#### From Braintrust Dashboard
+
 ```bash
 # View Braintrust experiment results
-# Visit: https://www.braintrust.dev/app/your-org/p/AgentSRE-Benchmark
-# In the experiment page, check:
+# URL: https://www.braintrust.dev/app/your-org/p/Syncause-Benchmark
+# Metrics available:
 # - Total Cost
 # - Average Cost
 # - Cost per Test
 ```
 
-
 ## Project Structure
 
 ```
-agentsre-benchmark/
-├── README.md                 # Project documentation (English)
-├── README_CN.md             # 项目说明文档 (Chinese)
+syncause-benchmark/
+├── README.md                 # English documentation
+├── README_CN.md              # Chinese documentation
 ├── requirements.txt          # Python dependencies
-├── run_benchmark.py         # Main benchmark script
-├── testdata/                # Test data directory
-│   ├── import_data.py       # Data import script
-│   └── syncause_dataset.json # SynCause dataset
-├── results/                 # Test results directory
+├── run_benchmark.py          # Main benchmark runner
+├── testdata/                 # Test dataset directory
+│   ├── import_data.py
+│   └── Syncause_dataset.json
+├── results/                  # Benchmark results
 │   ├── benchmark_results.json
 │   └── braintrust_data.json
-├── reports/                 # Reports directory
+├── reports/                  # Generated reports
 │   └── benchmark_report.html
-└── logs/                   # Logs directory
+└── logs/                     # Log files
     └── benchmark.log
 ```
 
-## Contributing
 
-We welcome contributions of new test cases and improvement suggestions!
+## Contribution Guidelines
 
-1. Fork this project
+Contributions are welcome — including new test cases, data extensions, or algorithm improvements.
+
+1. Fork this repository
 2. Create a feature branch
 3. Commit your changes
 4. Submit a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Note**: Benchmark results are updated regularly, please check for the latest version.
+This project is released under the [MIT License](LICENSE).

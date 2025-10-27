@@ -1,17 +1,26 @@
-# AgentSRE 基准测试
+# Syncause Benchmark 
 
-[English Version](README.md)
+[英文版 / English Version](README.md)
 
-## 项目简介
+**Syncause Benchmark** 提供了一组标准化的评估结果，用于量化在系统根因分析任务中 Syncause RCA (Root Cause Analysis) 方法的表现。该项目旨在公开 Syncause 在 AI SRE Agent 领域解决问题的能力，推动 AI SRE Agent 的可复现、可对比研究，提升透明度。
 
-本项目旨在记录和评估SynCause平台的AI智能体-AgentSRE在系统根因分析领域的基准测试。通过标准化的测试流程，我们能够客观地比较不同模型在故障诊断任务中的性能，包括Top-1、Top-3、Top-5准确率以及成本效益分析。
-我们认为使用AI智能体配合ebpf数据（todo:链接待完善，指向ebpf数据的作用）进行根因分析将极大提升rca的准确率-在top1准确率做到95%以上、top3准确率做到100…%。为此我们设立了这个测试集来验证目标，并且还将不断扩展测试集。
+## Syncause RCA 方法简介
+在根因分析和 AIOps 领域，尽管已有多种方法在特定数据集上取得一定效果，但整体仍面临准确率不足和工程化落地困难的问题。传统基于机器学习的根因分析方案通常存在以下问题：
+- **落地周期长**：需要在真实生产环境中花费数周时间完成模型训练与参数微调。
+- **缺乏可解释性**：生成的分析结果缺乏透明的推理路径和可解释性，用户难以信任输出内容。
+
+随着大语言模型（Large Language Model, LLMs）能力的快速演进，这些问题出现了新的解决路径。Syncause 基于 LLMs 构建了智能化的 RCA Agent，可在根因分析场景中提供更高准确度和更强时效性的解决方案。实际测试表明，将指标、日志和链路追踪等传统可观测性数据与 [eBPF 数据](https://syn-cause.com/blog/35e631d5-28fa-4c46-9f44-54f84707a2a4/) 结合使用，能够显著提升分析结果的可靠性与精确度。
+
+借助大语言模型的推理能力，Syncause 使根因分析过程实现了“白盒化”：推理逻辑与决策路径对用户完全可见。针对根因分析结果并非始终百分之百准确的现实，Syncause 提供了一种更具信任度的交互方式——系统输出的内容始终基于真实观测数据，即使未直接命中根因，也会以可视化形式呈现推理假设、验证路径及中间发现。这些发现往往能为用户提供关键线索，减少重复性排查工作，并显著缩短问题定位时间。
+
+本项目将持续更新不同大语言模型在各类测试场景下的识别准确率与表现，并不断扩展评测维度，以展示 Syncause 在多样化环境中的性能表现。当前报告结果基于 Syncause Beta 版本，后续版本的优化与测试结果将持续在此项目中发布。
 
 ## 测试数据集来源和测试方法
 
 ### 数据集描述
-测试数据集来源于 [RCAEval](https://github.com/phamquiluan/RCAEval) 项目，并对数据集进行了拓展，增加了ebpf指标数据。
-数据集在backupdata目录,数据集包含：
+测试数据集来源于 [RCAEval](https://github.com/phamquiluan/RCAEval) 项目，并在此基础上扩展了 Syncause 特有的 eBPF 指标。
+
+数据集中包含以下数据：
 
 - **故障场景**: 涵盖Kubernetes、微服务、网络、存储等多种故障类型
 - **日志数据**: 包含系统日志、应用日志、错误日志等
@@ -19,44 +28,31 @@
 - **标注信息**: 专家标注的真实根因和解决方案
 
 ## 测试方法
-我们完全使用了[RCAEval](https://github.com/phamquiluan/RCAEval) 项目来进行标准化测试，在该项目增加了一种新的根因分析算法（agentsre分析法），由RCAEval发起测试并生成测试报告。
+基于 [RCAEval](https://github.com/phamquiluan/RCAEval) 项目进行测试，该项目提供了标准化地测试与评估框架，我们在该框架中增加了一种新的根因分析算法--Syncause RCA，由RCAEval统一发起测试并生成结果报告。
+
+### 衡量准确度指标：AC@k (Accuracy@k)
+`AC@k` 表示该RCA方法所给出的排名前 `k` 个结果中，包含真实根因的概率。
+简单来说，就是问：如果我只检查该方法推荐的前 `k` 个怀疑对象，我有多大几率能找到真正的故障根源？
+
+`AC@k` 的得分范围为 0 到 1 之间。得分越高（越接近 1），代表该RCA方法的性能越好，这意味着它能更有效地将真实根因排在靠前的位置。
 
 ## 测试结果
+### 根因服务识别准确度
+在测试场景`Online Boutique`中，针对服务`emailservice`, `productcatalogservice`, `recommendationservice`的11-12🀄种独立故障类型，基于`grok-4-fast-non-reasoning`模型，使用 Syncause RCA 进行根因分析，得到准确度如下表所示：
 
-### 模型准确率对比
+| 服务 | 案例数 | AC@1 准确度 | AC@3 准确度 | AC@5 准确度 |
+| --- | --- | --- | --- | --- |
+| emailservice | 12 | 66.7% | 91.7% | 91.7% |
+| productcatalogservice | 11 | 63.6% | 90.9% | 90.9% |
+| recommendationservice | 12 | 58.3% | 91.7% | 100% |
 
-| 模型 | Top-1准确率 | Top-3准确率 | Top-5准确率 | 总测试数 | 成功率 |
-|------|-------------|-------------|-------------|----------|--------|
-| gpt-4o | 52% | 78% | 89% | 105 | 🟡 52% |
-| claude-3.5-sonnet | 82% | 94% | 98% | 105 | 🟢 82% |
-| gpt-4.1 | 67% | 85% | 93% | 105 | 🟡 67% |
-| gpt-5 | 74% | 88% | 95% | 105 | 🟡 74% |
-| deepseek-v3.1 | 75% | 89% | 96% | 105 | 🟡 75% |
-| qwen3-next-80b | 55% | 79% | 90% | 105 | 🟡 55% |
+**说明**：结果将随着模型与方法更新持续修正。未来版本将补充更多场景与模型对比结果。
 
-### 模型成本对比
+### 成本效益（Coming Soon）
 
-| 模型 | 测试数 | 平均成本 | 最小成本 | 最大成本 | 总成本 |
-|------|--------|----------|----------|----------|--------|
-| gpt-4o | 93 | $0.18 | $0.03 | $1.00 | $16.67 |
-| claude-3.5-sonnet | 95 | $0.25 | $0.06 | $1.01 | $22.85 |
-| gpt-4.1 | 94 | $0.11 | $0.02 | $0.66 | $10.68 |
-| gpt-5 | 94 | $0.19 | $0.02 | $0.59 | $17.43 |
-| deepseek-v3.1 | 95 | $0.08 | $0.01 | $0.35 | $7.60 |
-| qwen3-next-80b | 95 | $0.06 | $0.01 | $0.28 | $5.70 |
-
-### 模型延迟对比
-
-| 模型 | 平均(秒) | 最小(秒) | 最大(秒) | P50(秒) | P95(秒) |
-|------|----------|----------|----------|---------|---------|
-| gpt-4o | 26.6 | 8.0 | 67.1 | 25.9 | 55.3 |
-| claude-3.5-sonnet | 48.9 | 9.8 | 263.9 | 43.4 | 100.8 |
-| gpt-4.1 | 40.7 | 5.5 | 645.1 | 25.4 | 51.7 |
-| gpt-5 | 138.5 | 17.4 | 859.1 | 81.6 | 752.3 |
-| deepseek-v3.1 | 75.5 | 21.1 | 221.1 | 68.2 | 145.3 |
-| qwen3-next-80b | 45.2 | 12.3 | 156.7 | 38.9 | 89.4 |
-
-### 每类故障的准确度
+后续版本将补充以下维度的评估：
+- 每次分析的平均 Token 消耗
+- 任务完成的响应时间
 
 ## 复现步骤
 
@@ -74,9 +70,9 @@ pip install -r requirements.txt
 ### 2. 数据准备
 
 ```bash
-# 访问SynCause平台
+# 访问Syncause平台
 # 1. 打开 https://syn-cause.com/
-# 2. 按照网页提示安装SynCause平台
+# 2. 按照网页提示安装Syncause平台
 
 # 导入测试数据
 cd backupscript
@@ -108,7 +104,7 @@ grep "Top-5" logs/benchmark.log
 #### 从Braintrust获取成本信息
 ```bash
 # 查看Braintrust实验结果
-# 访问: https://www.braintrust.dev/app/your-org/p/AgentSRE-Benchmark
+# 访问: https://www.braintrust.dev/app/your-org/p/Syncause-Benchmark
 # 在实验页面查看:
 # - 总成本 (Total Cost)
 # - 平均成本 (Average Cost)
@@ -118,14 +114,14 @@ grep "Top-5" logs/benchmark.log
 ## 项目结构
 
 ```
-agentsre-benchmark/
+syncause-benchmark/
 ├── README.md                 # 项目说明文档 (英文)
 ├── README_CN.md             # 项目说明文档 (中文)
 ├── requirements.txt          # Python依赖
 ├── run_benchmark.py         # 基准测试主脚本
 ├── testdata/                # 测试数据目录
 │   ├── import_data.py       # 数据导入脚本
-│   └── syncause_dataset.json # SynCause数据集
+│   └── Syncause_dataset.json # Syncause数据集
 ├── results/                 # 测试结果目录
 │   ├── benchmark_results.json
 │   └── braintrust_data.json
@@ -146,8 +142,4 @@ agentsre-benchmark/
 
 ## 许可证
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
-
----
-
-**注意**: 本基准测试结果会定期更新，请关注最新版本。
+本项目采用 [MIT 许可证](LICENSE)。
