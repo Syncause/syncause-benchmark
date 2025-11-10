@@ -35,8 +35,8 @@ The dataset includes:
 * **Failure Scenarios**: Covers Kubernetes, microservices, networking, and storage fault types
 * **Log Data**: System, application, and error logs
 * **Metric Data**: Performance metrics and resource utilization
+* **Trace Data**: Distributed tracing data
 * **Annotations**: Expert-labeled ground-truth root causes and resolutions
-
 
 ## Evaluation Method
 
@@ -52,18 +52,26 @@ The score ranges from 0 to 1. A higher value (closer to 1) indicates that the RC
 
 ## Evaluation Results
 
-### Root Cause Service Identification Accuracy
+### Train Ticket Scenario
+Evaluation Date: 2025-11-07
 
-In the `Online Boutique` test scenario, for services `emailservice`, `productcatalogservice`, and `recommendationservice`, Syncause RCA was evaluated using the `grok-4-fast-non-reasoning` model.
-Each service contained 11–12 independent failure types. The results are summarized below:
+#### Root Cause Service Identification Accuracy
 
-| Service               | Cases | AC@1  | AC@3  | AC@5  |
-| --------------------- | ----- | ----- | ----- | ----- |
-| emailservice          | 12    | 66.7% | 91.7% | 91.7% |
-| productcatalogservice | 11    | 63.6% | 90.9% | 90.9% |
-| recommendationservice | 12    | 58.3% | 91.7% | 100%  |
+For services `ts-travel-service`, `ts-train-service`, and `ts-route-service` with CPU increase, memory increase, network delay, and packet loss faults injected, the accuracy **with Syncause eBPF data assistance** is as follows:
 
-> **Note:** Benchmark results will be continuously updated as models and analysis methods evolve. Future versions will include additional scenarios and model comparisons.
+| Model | Cases | AC@1 Accuracy | AC@3 Accuracy | AC@5 Accuracy |
+| --- | --- | --- | --- | --- |
+| grok-4-fast-non-reasoning | 30 | 86.67% (20/30) | 96.67% (29/30) |  \ |
+| qwen-plus | 30 | 90% (27/30) | 96.67% (29/30) |  \ |
+
+For comparison, without Syncause eBPF data assistance, the accuracy is as follows:
+
+| Model | Cases | AC@1 Accuracy | AC@3 Accuracy | AC@5 Accuracy |
+| --- | --- | --- | --- | --- |
+| grok-4-fast-non-reasoning | 30 | 60% (18/30) | 93.33% (28/30) |  \ |
+| qwen-plus | 30 | 60% (18/30) | 90% (27/30) |  \ |
+
+> **Note:** Results will be continuously updated as models and methods evolve. Future versions will include additional scenarios and model comparisons.
 
 
 ### Cost Efficiency
@@ -72,8 +80,8 @@ Average **token consumption** and **execution latency** per case:
 
 | Model | LLM Calls | Input Tokens | Output Tokens | Total Cost (USD) | Latency (s) |
 | --- | --- | --- | --- | --- | --- |
-| grok-4-fast-non-reasoning | 80 | 249,351 | 51,234 | $0.071 | 381.27 |
-| qwen-plus | 45 | 201,728 | 12,324 | $0.058 | 398.15 |
+| grok-4-fast-non-reasoning | 37 | 209,678 | 12,234 | $0.041 | 138s |
+| qwen-plus | 25 | 139,279 | 7,324 | $0.056 | 154s |
 
 
 ## Reproduction Guide
@@ -95,7 +103,7 @@ pip install -r requirements.txt
 # 1. Visit https://syn-cause.com/
 # 2. Follow the on-screen instructions to install the Syncause platform
 
-# Import benchmark datasets
+# Import benchmark datasets (Contact us for datasets)
 cd backupscript
 ./backup_scripts/victoriametrics_import.sh vm_backup_20241024_110000.tar.gz
 ./backup_scripts/clickhouse_import.sh clickhouse_backup_20241024_110000.tar.gz apo_restore
@@ -133,27 +141,6 @@ grep "Top-5" logs/benchmark.log
 # - Average Cost
 # - Cost per Test
 ```
-
-## Project Structure
-
-```
-syncause-benchmark/
-├── README.md                 # English documentation
-├── README_CN.md              # Chinese documentation
-├── requirements.txt          # Python dependencies
-├── run_benchmark.py          # Main benchmark runner
-├── testdata/                 # Test dataset directory
-│   ├── import_data.py
-│   └── Syncause_dataset.json
-├── results/                  # Benchmark results
-│   ├── benchmark_results.json
-│   └── braintrust_data.json
-├── reports/                  # Generated reports
-│   └── benchmark_report.html
-└── logs/                     # Log files
-    └── benchmark.log
-```
-
 
 ## Contribution Guidelines
 

@@ -37,25 +37,35 @@
 `AC@k` 的得分范围为 0 到 1 之间。得分越高（越接近 1），代表该RCA方法的性能越好，这意味着它能更有效地将真实根因排在靠前的位置。
 
 ## 测试结果
-### 根因服务识别准确度
-在测试场景`Online Boutique`中，针对服务`emailservice`, `productcatalogservice`, `recommendationservice`的 11-12 种独立故障类型，基于`grok-4-fast-non-reasoning`模型，使用 Syncause RCA 进行根因分析，得到准确度如下表所示：
+### Train Ticket 测试场景
+测试时间 2025-11-07
+#### 根因服务识别准确度
+针对服务`ts-travel-service`, `ts-train-service`, `ts-route-service`注入CPU升高、内存升高、网络延迟、网络丢包等故障，**在 Syncause eBPF 数据的辅助下**，准确度如下：
 
-| 服务 | 案例数 | AC@1 准确度 | AC@3 准确度 | AC@5 准确度 |
+| 模型 | 案例数 | AC@1 准确度 | AC@3 准确度 | AC@5 准确度 |
 | --- | --- | --- | --- | --- |
-| emailservice | 12 | 66.7% | 91.7% | 91.7% |
-| productcatalogservice | 11 | 63.6% | 90.9% | 90.9% |
-| recommendationservice | 12 | 58.3% | 91.7% | 100% |
+| grok-4-fast-non-reasoning | 30 | 86.67% (20/30) | 96.67% (29/30) |  \ |
+| qwen-plus | 30 | 90% (27/30) | 96.67% (29/30) |  \ |
+
+作为对比，在没有 Syncause eBPF 数据的辅助下，准确度如下：
+
+| 模型 | 案例数 | AC@1 准确度 | AC@3 准确度 | AC@5 准确度 |
+| --- | --- | --- | --- | --- |
+| grok-4-fast-non-reasoning | 30 | 60% (18/30) | 93.33% (28/30) |  \ |
+| qwen-plus | 30 | 60% (18/30) | 90% (27/30) |  \ |
+
 
 **说明**：结果将随着模型与方法更新持续修正。未来版本将补充更多场景与模型对比结果。
 
-### 成本效益
+#### 成本效益
 
 每个案例的平均 Token 消耗和耗时：
 
 | 模型 | LLM调用次数 | Input Tokens | Output Tokens | Total Cost (USD) | Latency (s) |
 | --- | --- | --- | --- | --- | --- |
-| grok-4-fast-non-reasoning | 80 | 249,351 | 51,234 | $0.071 | 381.27 |
-| qwen-plus | 45 | 201,728 | 12,324 | $0.058 | 398.15 |
+| grok-4-fast-non-reasoning | 37 | 209,678 | 12,234 | $0.041 | 138s |
+| qwen-plus | 25 | 139,279 | 7,324 | $0.056 | 154s |
+
 
 ## 复现步骤
 
@@ -77,7 +87,7 @@ pip install -r requirements.txt
 # 1. 打开 https://syn-cause.com/
 # 2. 按照网页提示安装Syncause平台
 
-# 导入测试数据
+# 导入测试数据 （联系我们获取）
 cd backupscript
 ./backup_scripts/victoriametrics_import.sh vm_backup_20241024_110000.tar.gz
 ./backup_scripts/clickhouse_import.sh clickhouse_backup_20241024_110000.tar.gz apo_restore
@@ -112,26 +122,6 @@ grep "Top-5" logs/benchmark.log
 # - 总成本 (Total Cost)
 # - 平均成本 (Average Cost)
 # - 每次测试成本 (Cost per Test)
-```
-
-## 项目结构
-
-```
-syncause-benchmark/
-├── README.md                 # 项目说明文档 (英文)
-├── README_CN.md             # 项目说明文档 (中文)
-├── requirements.txt          # Python依赖
-├── run_benchmark.py         # 基准测试主脚本
-├── testdata/                # 测试数据目录
-│   ├── import_data.py       # 数据导入脚本
-│   └── Syncause_dataset.json # Syncause数据集
-├── results/                 # 测试结果目录
-│   ├── benchmark_results.json
-│   └── braintrust_data.json
-├── reports/                 # 报告目录
-│   └── benchmark_report.html
-└── logs/                   # 日志目录
-    └── benchmark.log
 ```
 
 ## 贡献指南
