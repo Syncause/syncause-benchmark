@@ -2,6 +2,8 @@
 
 [英文版 / English Version](README.md)
 
+访问 [Syncause 官网](https://syn-cause.com/) 获取更多详细信息。
+
 **Syncause Benchmark** 提供了一组标准化的评估结果，用于量化在系统根因分析任务中 Syncause RCA (Root Cause Analysis) 方法的表现。该项目旨在公开 Syncause 在 AI SRE Agent 领域解决问题的能力，推动 AI SRE Agent 的可复现、可对比研究，提升透明度。
 
 ## Syncause RCA 方法简介
@@ -10,6 +12,8 @@
 - **缺乏可解释性**：生成的分析结果缺乏透明的推理路径和可解释性，用户难以信任输出内容。
 
 随着大语言模型（Large Language Model, LLMs）能力的快速演进，这些问题出现了新的解决路径。Syncause 基于 LLMs 构建了智能化的 RCA Agent，可在根因分析场景中提供更高准确度和更强时效性的解决方案。实际测试表明，将指标、日志和链路追踪等传统可观测性数据与 [eBPF 数据](https://syn-cause.com/blog/35e631d5-28fa-4c46-9f44-54f84707a2a4/) 结合使用，能够显著提升分析结果的可靠性与精确度。
+
+> 要了解 Syncause 的工作原理，欢迎访问[技术博客](https://syn-cause.com/blog/ad9c00f3-8509-4b7d-a598-5419e7fbc2b1/) 获取更多详细信息。
 
 借助大语言模型的推理能力，Syncause 使根因分析过程实现了“白盒化”：推理逻辑与决策路径对用户完全可见。针对根因分析结果并非始终百分之百准确的现实，Syncause 提供了一种更具信任度的交互方式——系统输出的内容始终基于真实观测数据，即使未直接命中根因，也会以可视化形式呈现推理假设、验证路径及中间发现。这些发现往往能为用户提供关键线索，减少重复性排查工作，并显著缩短问题定位时间。
 

@@ -1,7 +1,7 @@
 
 # Syncause Benchmark
 
-[中文版 / Chinese Version](README_CN.md)
+Visit [Syncause Website](https://syn-cause.com/) for more information.
 
 **Syncause Benchmark** provides a standardized evaluation framework to measure the performance of the **Syncause RCA** (Root Cause Analysis) method in system fault diagnosis tasks.
 This project aims to openly demonstrate the problem-solving capability of Syncause in the AI SRE Agent domain and to promote reproducible, comparable, and transparent research for AI-driven incident analysis.
@@ -17,6 +17,8 @@ Traditional machine learning–based RCA solutions often face the following chal
 
 With the rapid advancement of Large Language Models (LLMs), new opportunities have emerged to address these challenges.
 Syncause leverages LLMs to build an intelligent RCA Agent capable of delivering higher accuracy and faster response in root cause analysis tasks. Empirical results show that combining conventional observability signals (metrics, logs, and traces) with [**eBPF data**](https://syn-cause.com/blog/35e631d5-28fa-4c46-9f44-54f84707a2a4/) significantly improves diagnostic reliability and precision.
+
+> Curious how Syncause works? Check out our [technical blog post](https://syn-cause.com/blog/ad9c00f3-8509-4b7d-a598-5419e7fbc2b1/) for more details.
 
 By utilizing the reasoning capabilities of LLMs, Syncause makes RCA a **white-box process**—its inference logic and decision paths are fully visible to users.
 Recognizing that no RCA model is 100% accurate, Syncause introduces a trust-oriented approach: every output is grounded in real system observations. Even when the exact root cause is not immediately identified, the system visualizes intermediate hypotheses, validation paths, and **findings**. These findings provide valuable investigative clues, reduce repetitive work, and significantly shorten incident resolution time.
