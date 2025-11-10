@@ -118,16 +118,6 @@ grep "Top-3" logs/benchmark.log
 grep "Top-5" logs/benchmark.log
 ```
 
-#### 从Braintrust获取成本信息
-```bash
-# 查看Braintrust实验结果
-# 访问: https://www.braintrust.dev/app/your-org/p/Syncause-Benchmark
-# 在实验页面查看:
-# - 总成本 (Total Cost)
-# - 平均成本 (Average Cost)
-# - 每次测试成本 (Cost per Test)
-```
-
 ## 贡献指南
 
 欢迎提交新的测试用例和改进建议！

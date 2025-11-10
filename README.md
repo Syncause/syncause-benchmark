@@ -133,17 +133,6 @@ grep "Top-3" logs/benchmark.log
 grep "Top-5" logs/benchmark.log
 ```
 
-#### From Braintrust Dashboard
-
-```bash
-# View Braintrust experiment results
-# URL: https://www.braintrust.dev/app/your-org/p/Syncause-Benchmark
-# Metrics available:
-# - Total Cost
-# - Average Cost
-# - Cost per Test
-```
-
 ## Contribution Guidelines
 
 Contributions are welcome — including new test cases, data extensions, or algorithm improvements.
